@@ -9,7 +9,9 @@ import { toast } from "react-toastify";
 const ProductListing = () => {
   const [addedProductId, setAddedProductId] = useState(null);
   const [selectedSize, setSelectedSize] = useState({});
+
   const { categoryName } = useParams();
+
   const {
     setSearchTerm,
     price,
@@ -25,8 +27,6 @@ const ProductListing = () => {
     sortedProducts,
   } = useContext(ProductContext);
 
-  console.log('selected Product:', selectedSize)
-
   const { addToCart, addToWishList } = useContext(CartContext);
 
   const finalProducts = categoryName
@@ -39,7 +39,9 @@ const ProductListing = () => {
     return (
       <>
         <Header />
-        <p className="text-center text-danger mt-5">{error.message}</p>
+        <p className="text-center text-danger mt-5">
+          {error.message}
+        </p>
         <Footer />
       </>
     );
@@ -58,7 +60,11 @@ const ProductListing = () => {
   };
 
   const hasActiveFilters = () => {
-    return price !== "" || categories.length > 0 || rating > 0;
+    return (
+      price !== "" ||
+      categories.length > 0 ||
+      rating > 0
+    );
   };
 
   const handleCategoryChange = (event) => {
@@ -68,39 +74,40 @@ const ProductListing = () => {
     if (checked) {
       setCategories([...categories, value]);
     } else {
-      setCategories(categories.filter((item) => item !== value));
+      setCategories(
+        categories.filter((item) => item !== value),
+      );
     }
   };
 
   return (
     <>
       <Header setSearchTerm={setSearchTerm} />
+
       <main className="container py-5">
         {loading && (
-          <>
-            <p className="d-flex justify-content-center align-items-center">
-              loading...
-            </p>
-          </>
+          <p className="text-center">Loading...</p>
         )}
 
         <div
-          className="d-flex flex-column flex-md-row"
+          className="d-flex flex-column flex-md-row gap-4"
           style={{ minHeight: "80vh" }}
         >
           <div
-            className="d-flex flex-column align-items-start bg-secondary-subtle p-3 w-100"
-            style={{ minWidth: "260px" }}
+            className="d-flex flex-column align-items-start bg-light p-3 rounded shadow-sm"
+            style={{
+              minWidth: "260px",
+              width: "260px",
+              height: "fit-content",
+            }}
           >
-            <h4>
+            <h4 className="mb-4">
               <b>Filter Products</b>
             </h4>
-            <br />
-            <div>
-              <label htmlFor="price">
-                <h5>Price: </h5>
-              </label>
-              <br />
+
+            <div className="mb-4 w-100">
+              <h5>Price:</h5>
+
               <div className="form-check">
                 <input
                   className="form-check-input"
@@ -110,10 +117,14 @@ const ProductListing = () => {
                   checked={price === 50}
                   onChange={() => setPrice(50)}
                 />
-                <label className="form-check-label" htmlFor="price50">
+                <label
+                  className="form-check-label"
+                  htmlFor="price50"
+                >
                   $50 & below
                 </label>
               </div>
+
               <div className="form-check">
                 <input
                   className="form-check-input"
@@ -123,10 +134,14 @@ const ProductListing = () => {
                   checked={price === 150}
                   onChange={() => setPrice(150)}
                 />
-                <label className="form-check-label" htmlFor="price150">
+                <label
+                  className="form-check-label"
+                  htmlFor="price150"
+                >
                   $150 & below
                 </label>
               </div>
+
               <div className="form-check">
                 <input
                   className="form-check-input"
@@ -136,148 +151,78 @@ const ProductListing = () => {
                   checked={price === 200}
                   onChange={() => setPrice(200)}
                 />
-                <label className="form-check-label" htmlFor="price200">
+                <label
+                  className="form-check-label"
+                  htmlFor="price200"
+                >
                   $200 & below
                 </label>
               </div>
             </div>
-            <br />
-            <div>
-              <label htmlFor="category">
-                <h5>Category: </h5>
-              </label>
-              <br />
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="women"
-                  onChange={handleCategoryChange}
-                  checked={categories.includes("Women")}
-                  value="Women"
-                />
-                <label className="form-check-label" htmlFor="women">
-                  Women
-                </label>
-              </div>
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="men"
-                  onChange={handleCategoryChange}
-                  value="Men"
-                  checked={categories.includes("Men")}
-                />
-                <label className="form-check-label" htmlFor="men">
-                  Men
-                </label>
-              </div>
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="child"
-                  onChange={handleCategoryChange}
-                  value="Child"
-                  checked={categories.includes("Child")}
-                />
-                <label className="form-check-label" htmlFor="child">
-                  Child
-                </label>
-              </div>
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="men sport"
-                  onChange={handleCategoryChange}
-                  value="Men Sport"
-                  checked={categories.includes("Men Sport")}
-                />
-                <label className="form-check-label" htmlFor="men sport">
-                  Men Sports
-                </label>
-              </div>
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="women sport"
-                  onChange={handleCategoryChange}
-                  value="Women Sport"
-                  checked={categories.includes("Women Sport")}
-                />
-                <label className="form-check-label" htmlFor="women sport">
-                  Women Sports
-                </label>
-              </div>
-              <br />
+
+            <div className="mb-4 w-100">
+              <h5>Category:</h5>
+
+              {[
+                "Women",
+                "Men",
+                "Child",
+                "Men Sport",
+                "Women Sport",
+              ].map((category) => (
+                <div
+                  className="form-check"
+                  key={category}
+                >
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id={category}
+                    value={category}
+                    checked={categories.includes(category)}
+                    onChange={handleCategoryChange}
+                  />
+
+                  <label
+                    className="form-check-label"
+                    htmlFor={category}
+                  >
+                    {category}
+                  </label>
+                </div>
+              ))}
             </div>
-            <div>
-              <label htmlFor="rating">
-                <h5>Rating: </h5>
-              </label>
-              <br />
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="rating"
-                  id="rating48"
-                  checked={rating === 4.8}
-                  onChange={() => setRating(4.8)}
-                />
-                <label className="form-check-label" htmlFor="rating48">
-                  4.8 Stars & above
-                </label>
-              </div>
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="rating"
-                  id="rating46"
-                  checked={rating === 4.6}
-                  onChange={() => setRating(4.6)}
-                />
-                <label className="form-check-label" htmlFor="rating46">
-                  4.6 Stars & above
-                </label>
-              </div>
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="rating"
-                  id="rating44"
-                  checked={rating === 4.4}
-                  onChange={() => setRating(4.4)}
-                />
-                <label className="form-check-label" htmlFor="rating44">
-                  4.4 Stars & above
-                </label>
-              </div>
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="rating"
-                  id="rating42"
-                  checked={rating === 4.2}
-                  onChange={() => setRating(4.2)}
-                />
-                <label className="form-check-label" htmlFor="rating42">
-                  4.2 Stars & above
-                </label>
-              </div>
+
+            <div className="mb-4 w-100">
+              <h5>Rating:</h5>
+
+              {[4.8, 4.6, 4.4, 4.2].map((rate) => (
+                <div
+                  className="form-check"
+                  key={rate}
+                >
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="rating"
+                    id={`rating${rate}`}
+                    checked={rating === rate}
+                    onChange={() => setRating(rate)}
+                  />
+
+                  <label
+                    className="form-check-label"
+                    htmlFor={`rating${rate}`}
+                  >
+                    {rate} Stars & above
+                  </label>
+                </div>
+              ))}
             </div>
-            <br />
-            <div>
-              <label htmlFor="sortBy">
-                <h5>Sort By</h5>
-              </label>
-              <br />
+
+            <div className="mb-4 w-100">
+              <h5>Sort By</h5>
+
               <div className="form-check">
                 <input
                   className="form-check-input"
@@ -285,12 +230,19 @@ const ProductListing = () => {
                   name="sortBy"
                   id="lowToHigh"
                   checked={sortBy === "LOW_TO_HIGH"}
-                  onChange={() => setSortBy("LOW_TO_HIGH")}
+                  onChange={() =>
+                    setSortBy("LOW_TO_HIGH")
+                  }
                 />
-                <label className="form-check-label" htmlFor="lowToHigh">
+
+                <label
+                  className="form-check-label"
+                  htmlFor="lowToHigh"
+                >
                   Price - Low to High
                 </label>
               </div>
+
               <div className="form-check">
                 <input
                   className="form-check-input"
@@ -298,15 +250,22 @@ const ProductListing = () => {
                   name="sortBy"
                   id="highToLow"
                   checked={sortBy === "HIGH_TO_LOW"}
-                  onChange={() => setSortBy("HIGH_TO_LOW")}
+                  onChange={() =>
+                    setSortBy("HIGH_TO_LOW")
+                  }
                 />
-                <label className="form-check-label" htmlFor="highToLow">
-                  Price - High to Low
+
+                <label
+                  className="form-check-label"
+                  htmlFor="highToLow"
+                >
+                  Price - High To Low
                 </label>
               </div>
             </div>
+
             <button
-              className="btn btn-sm btn-outline-dark w-100 mt-4"
+              className="btn btn-outline-dark w-100"
               onClick={() => {
                 setPrice("");
                 setCategories([]);
@@ -318,146 +277,213 @@ const ProductListing = () => {
             </button>
           </div>
 
-          <div className="m-4 d-flex flex-column gap-md-3">
-            <div className="mx-0">
-              {hasActiveFilters() && (
-                <div className="mb-3">
-                  <h4>
-                    <strong>Active Filters:</strong>
-                  </h4>
+          <div className="flex-grow-1">
+            {hasActiveFilters() && (
+              <div className="mb-4">
+                <h5>
+                  <strong>Active Filters:</strong>
+                </h5>
 
-                  {categories.map((cat) => (
-                    <span
-                      key={cat}
-                      className="badge bg-dark mx-1"
-                      style={{ cursor: "pointer" }}
-                      onClick={() => removeCategory(cat)}
-                    >
-                      {cat} ✖
-                    </span>
-                  ))}
-
-                  {price !== "" && (
-                    <span
-                      className="badge bg-dark mx-1"
-                      style={{ cursor: "pointer" }}
-                      onClick={removePrice}
-                    >
-                      ${price} & below ✖
-                    </span>
-                  )}
-
-                  {rating > 0 && (
-                    <span
-                      className="badge bg-dark mx-1"
-                      style={{ cursor: "pointer" }}
-                      onClick={removeRating}
-                    >
-                      {rating}+ ✖
-                    </span>
-                  )}
-                </div>
-              )}
-              <h5>
-                Show All Products (Showing {finalProducts?.length || 0}{" "}
-                products)
-              </h5>
-            </div>
-            <div className="d-flex justify-content-between gap-3 gap-md-2 flex-wrap ">
-              {finalProducts?.map((product) => (
-                console.log(product),
-                <>
-                  <div
-                    key={product._id}
-                    className="card w-100 d-flex align-items-center justify-content-center p-3"
-                    style={{ maxWidth: "18rem" }}
+                {categories.map((cat) => (
+                  <span
+                    key={cat}
+                    className="badge bg-dark me-2 mb-2"
+                    style={{ cursor: "pointer" }}
+                    onClick={() =>
+                      removeCategory(cat)
+                    }
                   >
-                    <div
-                      className="card d-flex align-items-center justify-content-center "
-                      style={{ maxWidth: "18rem" }}
+                    {cat} ✖
+                  </span>
+                ))}
+
+                {price !== "" && (
+                  <span
+                    className="badge bg-dark me-2 mb-2"
+                    style={{ cursor: "pointer" }}
+                    onClick={removePrice}
+                  >
+                    ${price} & below ✖
+                  </span>
+                )}
+
+                {rating > 0 && (
+                  <span
+                    className="badge bg-dark me-2 mb-2"
+                    style={{ cursor: "pointer" }}
+                    onClick={removeRating}
+                  >
+                    {rating}+ ✖
+                  </span>
+                )}
+              </div>
+            )}
+
+            <h5 className="mb-4">
+              Show All Products (
+              {finalProducts?.length || 0} Products)
+            </h5>
+
+            <div className="d-flex flex-wrap gap-4">
+              {finalProducts?.map((product) => (
+                <div
+                  key={product._id}
+                  className="card p-3 shadow-sm"
+                  style={{
+                    width: "18rem",
+                    maxWidth: "100%",
+                  }}
+                >
+                  <div className="position-relative">
+                    <i
+                      className="bi bi-heart-fill text-danger fs-3 position-absolute top-0 end-0 m-2"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        if (
+                          !selectedSize[product._id]
+                        ) {
+                          toast(
+                            "Please Select The Size",
+                          );
+                          return;
+                        }
+
+                        addToWishList(
+                          product,
+                          selectedSize[
+                            product._id
+                          ],
+                        );
+
+                        setAddedProductId(
+                          product._id,
+                        );
+                      }}
+                    ></i>
+
+                    <img
+                      src={product.productImage}
+                      className="card-img-top img-fluid object-fit-cover"
+                      alt={product.productName}
+                      style={{ height: "250px" }}
+                    />
+                  </div>
+
+                  <div className="card-body d-flex flex-column">
+                    <h5 className="card-title text-center">
+                      {product.productName}
+                    </h5>
+
+                    <div className="d-flex justify-content-between mb-3">
+                      <h6>
+                        $
+                        {product.productPrice}
+                      </h6>
+
+                      <h6>
+                        ⭐ {product.rating}
+                      </h6>
+                    </div>
+
+                    {/* Size */}
+                    <select
+                      value={
+                        selectedSize[
+                          product._id
+                        ] || ""
+                      }
+                      className="form-select mb-3"
+                      onChange={(e) =>
+                        setSelectedSize({
+                          ...selectedSize,
+                          [product._id]:
+                            e.target.value,
+                        })
+                      }
                     >
-                      <i
-                        className="card-img-overlay bi bi-heart-fill text-danger fs-3"
+                      <option value="">
+                        Select Size
+                      </option>
+                      <option value="S">
+                        S
+                      </option>
+                      <option value="M">
+                        M
+                      </option>
+                      <option value="L">
+                        L
+                      </option>
+                      <option value="XL">
+                        XL
+                      </option>
+                      <option value="XXL">
+                        XXL
+                      </option>
+                    </select>
+
+                    <div className="d-flex flex-column gap-2 mt-auto">
+                      <Link
+                        to={
+                          addedProductId ===
+                          product._id
+                            ? "/cart"
+                            : "#"
+                        }
+                        className="btn btn-primary"
                         onClick={(e) => {
-                          if (!selectedSize[product._id]) {
-                            toast("Please Selected the size");
+                          const size =
+                            selectedSize[
+                              product._id
+                            ];
+
+                          if (!size) {
+                            e.preventDefault();
+
+                            toast(
+                              "Please Select The Size",
+                            );
+
                             return;
-                          } else {
-                            addToWishList(product, selectedSize[product._id]);
-                            setAddedProductId(product._id);
+                          }
+
+                          if (
+                            addedProductId !==
+                            product._id
+                          ) {
+                            e.preventDefault();
+
+                            addToCart(
+                              product,
+                              size,
+                            );
+
+                            setAddedProductId(
+                              product._id,
+                            );
                           }
                         }}
-                      ></i>
-                      <img
-                        src={product.productImage}
-                        className="img-fluid card-img h-100 object-fit-cover card-img-top"
-                        alt="..."
-                      />
-                    </div>
-
-                    <div className="d-flex justify-content-center align-items-center flex-column gap-1">
-                      <h5 className="card-text">{product.productName}</h5>
-                      <div className="d-flex justify-content-around gap-5 w-100">
-                        <h6>MRP: ${product.productPrice}</h6>
-                        <h6>{product.rating} Rating</h6>
-                      </div>
-                      <select
-                        value={selectedSize[product._id] || ""}
-                        className="form-select mb-2"
-                        onChange={(e) =>
-                          setSelectedSize({
-                            ...selectedSize,
-                            [product._id]: e.target.value,
-                          })
-                        }
                       >
-                        console.log(selectedSize[product._id])
-                        <option value="">Select Size</option>
-                        <option value="S">S</option>
-                        <option value="M">M</option>
-                        <option value="L">L</option>
-                        <option value="XL">XL</option>
-                        <option value="XXL">XXL</option>
-                      </select>
+                        {addedProductId ===
+                        product._id
+                          ? "Go To Cart"
+                          : "Add To Cart"}
+                      </Link>
 
-                      <div className="d-flex flex-column gap-2 mx-5 pt-2 w-100">
-                        <Link
-                          to={addedProductId === product._id ? "/cart" : "#"}
-                          onClick={(e) => {
-                            const size = selectedSize[product._id];
-                            if (!size) {
-                              e.preventDefault();
-                              toast("Please Selected the size");
-                              return;
-                            }
-                            if (addedProductId !== product._id) {
-                              e.preventDefault();
-                              addToCart(product, size);
-                              setAddedProductId(product._id);
-                            }
-                          }}
-                          className="btn btn-primary "
-                        >
-                          {addedProductId === product._id
-                            ? "Go To Cart"
-                            : "Add To Cart"}
-                        </Link>
-
-                        <Link
-                          to={`/productPage/${product._id}`}
-                          className="btn btn-primary"
-                        >
-                          More Detail
-                        </Link>
-                      </div>
+                      <Link
+                        to={`/productPage/${product._id}`}
+                        className="btn btn-outline-primary"
+                      >
+                        More Detail
+                      </Link>
                     </div>
                   </div>
-                </>
+                </div>
               ))}
             </div>
           </div>
         </div>
       </main>
+
       <Footer />
     </>
   );
