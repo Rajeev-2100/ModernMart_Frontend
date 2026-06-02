@@ -44,10 +44,9 @@ export const OrderProvider = ({ children }) => {
 
   const handleAllOrderData = async () => {
     try {
-      setLoading(true);
       const res = await fetch("https://major-project-backend1.vercel.app/api/order");
       const data = await res.json();
-
+      
       setOrders(data.data || []);
     } catch (err) {
       console.error(err);

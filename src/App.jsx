@@ -1,16 +1,17 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import Header from "./components/Header";
+// import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import MainHeader from "./components/MainHeader";
 
 function App() {
   const [productPage, setProductPage] = useState(true);
 
   return (
     <>
-      <Header />
+      <MainHeader />
       <main className="container py-5">
         <section className="mb-5">
           <div className="d-flex justify-content-center align-items-center ">
