@@ -1,4 +1,4 @@
-import Header from "../components/Header";
+import OrderHeader from "../components/OrderHeader";
 import Footer from "../components/Footer";
 import { useContext } from "react";
 import OrderContext from "../useContext/Order";
@@ -13,7 +13,7 @@ const Order = () => {
 
   return (
     <>
-      <Header />
+      <OrderHeader />
       <main className="container py-4 py-lg-5">
         <h3 className="mb-4 fw-bold">My Orders</h3>
         <button

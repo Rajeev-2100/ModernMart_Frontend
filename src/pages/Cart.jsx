@@ -1,11 +1,13 @@
 import { useContext, useState } from "react";
 import CartContext from "../useContext/Cart.jsx";
-import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import CartHeader from "../components/CartHeader.jsx";
+import ProductContext from "../useContext/product.jsx";
 
 const Cart = () => {
+  const { setSearchTerm } = useContext(ProductContext)
   const {
     cart,
     cartLoaded,
@@ -31,7 +33,7 @@ const Cart = () => {
   return (
     <>
       <div className="d-flex flex-column min-vh-100">
-        <Header />
+        <CartHeader setSearchTerm={setSearchTerm}/>
         <main className="container py-5 flex-grow-1">
           <h4 className="text-center mb-4">My Cart ({cart.length})</h4>
 

@@ -1,9 +1,9 @@
 import { useContext, useState } from "react";
 import { Link } from "react-router";
 import Footer from "../components/Footer";
-import Header from "../components/Header";
 import CartContext from "../useContext/Cart";
 import { toast } from "react-toastify";
+import WishlistHeader from "../components/WishlistHeader";
 
 const WishListPage = () => {
   const [addedProductId, setAddedProductId] = useState(null);
@@ -25,7 +25,7 @@ const WishListPage = () => {
   return (
     <>
       <div className="d-flex flex-column min-vh-100">
-        <Header />
+        <WishlistHeader />
         <main className="container py-5 flex-grow-1">
           <h4 className="text-center mb-4">
             My Wishlist ({wishList?.length || 0})

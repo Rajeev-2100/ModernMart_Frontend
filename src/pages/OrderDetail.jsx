@@ -1,8 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import OrderContext from "../useContext/Order";
-import Header from "../components/Header";
 import Footer from "../components/Footer";
+import OrderDetailHeader from "../components/OrderDetailHeader";
 
 const OrderDetail = () => {
   const { orderId } = useParams();
@@ -18,7 +18,7 @@ const OrderDetail = () => {
   if (loading) {
     return (
       <>
-        <Header />
+        <OrderDetailHeader />
         <div className="container py-5 text-center">
           <div className="spinner-border text-primary mb-3" />
           <h5>Loading order details...</h5>
@@ -31,7 +31,7 @@ const OrderDetail = () => {
   if (!order) {
     return (
       <>
-        <Header />
+        <OrderDetailHeader />
         <div className="container py-5 text-center">
           <h4>Order not found</h4>
         </div>
@@ -42,7 +42,7 @@ const OrderDetail = () => {
 
   return (
     <>
-      <Header />
+      <OrderDetailHeader />
 
       <main className="container py-5">
         <div className="d-flex justify-content-between align-items-center mb-4">
