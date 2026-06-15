@@ -34,7 +34,7 @@ const Header = () => {
     <header className="bg-body-tertiary shadow-sm px-4 px-lg-0">
       <nav className="navbar navbar-expand-lg container">
         <Link className="navbar-brand fw-bold" to="/">
-          MyShoppingSite
+          <h2><b>Modern Mart</b></h2>
         </Link>
 
         <button
