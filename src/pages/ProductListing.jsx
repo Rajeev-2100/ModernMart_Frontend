@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 const ProductListing = () => {
   const [addedProductId, setAddedProductId] = useState(null);
   const [selectedSize, setSelectedSize] = useState({});
+  const [showFilters, setShowFilters] = useState(false);
 
   const { categoryName } = useParams();
 
@@ -84,24 +85,140 @@ const ProductListing = () => {
     <>
       <Header setSearchTerm={setSearchTerm} />
 
-      <main className="container py-5">
+      <style>{`
+        .pl-layout {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+
+        .pl-filter-panel {
+          width: 100%;
+          height: fit-content;
+        }
+
+        .pl-filter-toggle {
+          display: none;
+        }
+
+        .pl-product-card {
+          width: 100%;
+        }
+
+        @media (max-width: 575.98px) {
+          .pl-product-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+
+        @media (min-width: 576px) and (max-width: 767.98px) {
+          .pl-product-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+        }
+
+        @media (max-width: 767.98px) {
+          .pl-filter-toggle {
+            display: flex;
+          }
+
+          .pl-filter-panel {
+            display: none;
+          }
+
+          .pl-filter-panel.pl-filter-panel--open {
+            display: flex;
+          }
+        }
+
+        @media (min-width: 768px) {
+          .pl-layout {
+            flex-direction: row;
+          }
+
+          .pl-filter-panel {
+            min-width: 260px;
+            width: 260px;
+            flex-shrink: 0;
+          }
+
+          .pl-product-grid {
+            grid-template-columns: repeat(1, 1fr);
+          }
+        }
+
+        @media (min-width: 992px) and (max-width: 1209.98px) {
+          .pl-product-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+
+        @media (min-width: 1210px) and (max-width: 1439.98px) {
+          .pl-product-grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
+        }
+
+          @media (min-width: 1440px) {
+          .pl-product-grid {
+            grid-template-columns: repeat(4, 1fr);
+          }
+        }
+
+
+        @media (min-width: 992px) {
+          .pl-product-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+
+        @media (min-width: 1200px) {
+          .pl-product-grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
+        }
+
+        @media (min-width: 1440px) {
+          .pl-product-grid {
+            grid-template-columns: repeat(4, 1fr);
+          }
+        }
+
+
+        .pl-product-grid {
+          display: grid;
+          gap: 1.5rem;
+        }
+      `}</style>
+
+      <main className="container py-4 py-md-5">
         {loading && (
           <p className="text-center">Loading...</p>
         )}
 
-        <div
-          className="d-flex flex-column flex-md-row gap-4"
-          style={{ minHeight: "80vh" }}
+        <button
+          className="btn btn-outline-dark w-100 mb-3 pl-filter-toggle align-items-center justify-content-between"
+          onClick={() => setShowFilters((prev) => !prev)}
         >
+          <span>
+            <i className="bi bi-sliders me-2"></i>
+            Filter & Sort
+            {hasActiveFilters() && (
+              <span className="badge bg-dark ms-2">
+                {categories.length + (price !== "" ? 1 : 0) + (rating > 0 ? 1 : 0)}
+              </span>
+            )}
+          </span>
+          <i className={`bi bi-chevron-${showFilters ? "up" : "down"}`}></i>
+        </button>
+
+        <div className="pl-layout">
           <div
-            className="d-flex flex-column align-items-start bg-light p-3 rounded shadow-sm"
-            style={{
-              minWidth: "260px",
-              width: "260px",
-              height: "fit-content",
-            }}
+            className={`pl-filter-panel flex-column align-items-start bg-light p-3 rounded shadow-sm ${
+              showFilters ? "pl-filter-panel--open" : ""
+            }`}
           >
-            <h4 className="mb-4">
+            <h4 className="mb-4 d-none d-md-block">
               <b>Filter Products</b>
             </h4>
 
@@ -277,7 +394,7 @@ const ProductListing = () => {
             </button>
           </div>
 
-          <div className="flex-grow-1">
+          <div className="flex-grow-1" style={{ minWidth: 0 }}>
             {hasActiveFilters() && (
               <div className="mb-4">
                 <h5>
@@ -324,15 +441,11 @@ const ProductListing = () => {
               {finalProducts?.length || 0} Products)
             </h5>
 
-            <div className="d-flex flex-wrap gap-4">
+            <div className="pl-product-grid">
               {finalProducts?.map((product) => (
                 <div
                   key={product._id}
-                  className="card p-3 shadow-sm"
-                  style={{
-                    width: "18rem",
-                    maxWidth: "100%",
-                  }}
+                  className="card p-3 shadow-sm pl-product-card"
                 >
                   <div className="position-relative">
                     <i
