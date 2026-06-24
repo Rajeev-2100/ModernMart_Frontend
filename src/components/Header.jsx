@@ -58,9 +58,7 @@ const Header = () => {
           </form>
 
           <div className="d-flex flex-row flex-lg-row align-items-end align-items-lg-center gap-3 ms-lg-3">
-            <Link to={`/userProfile`}>
-              <i className="bi bi-person fs-4 text-dark"></i>
-            </Link>
+            
 
             <Link
               to={`/wishList`}
@@ -87,6 +85,14 @@ const Header = () => {
             >
               <i className="bi bi-box-fill fs-4"></i>
               <span className="d-lg-inline d-none">Order</span>
+            </Link>
+
+            <Link
+              to={`/userProfile`}
+              className="text-decoration-none text-dark d-flex align-items-center gap-1"
+            >
+              <i class="bi bi-person-circle fs-4"></i>
+              <span className="d-lg-inline d-none">User</span>
             </Link>
           </div>
         </div>

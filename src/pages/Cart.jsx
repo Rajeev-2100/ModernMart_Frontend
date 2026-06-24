@@ -130,7 +130,7 @@ const Cart = () => {
                     <b>Total Amount:</b> ${totalPrice.toFixed(2)}
                   </h5>
                   <Link to="/checkOut" className="btn btn-primary mt-3">
-                    PLACE ORDER
+                    CheckOut
                   </Link>
                 </div>
               </div>

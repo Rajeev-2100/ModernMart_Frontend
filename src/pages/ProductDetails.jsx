@@ -1,8 +1,8 @@
 import { useParams, Link } from "react-router";
 import useFetch from "../useFetch";
-import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { useState } from "react";
+import MainHeader from "../components/MainHeader";
 
 export const productMRP = (productData) => {
   const [quantity, setQuantity] = useState(1);
@@ -98,7 +98,7 @@ const ProductDetail = () => {
       `}</style>
 
       <div className="d-flex flex-column min-vh-100">
-        <Header />
+        <MainHeader />
 
         <main className="container py-5 flex-grow-1">
           {loading && <p className="text-center">Loading...</p>}

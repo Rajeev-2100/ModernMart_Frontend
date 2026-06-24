@@ -27,19 +27,63 @@ const Checkout = () => {
   const [editingAddressId, setEditingAddressId] = useState(null);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
 
+  // ✅ In Checkout.js - placeOrderFromCart function
   const placeOrderFromCart = async () => {
-    if (!selectedAddressId) return;
-
-    for (const item of cart) {
-      await handlePayment(
-        userDetails[0]._id,
-        selectedAddressId,
-        item.productQuantity,
-        item.product._id,
-      );
+    if (!selectedAddressId) {
+      toast.warning("Please select a delivery address");
+      return;
     }
-    await deleteAllCart();
-    toast("Also the Cart deleted successfully!");
+
+    if (cart.length === 0) {
+      toast.warning("Your cart is empty");
+      return;
+    }
+
+    if (!userDetails || userDetails.length === 0) {
+      toast.error("User details not found");
+      return;
+    }
+
+    try {
+      // ✅ Prepare products array
+      const products = cart.map((item) => ({
+        productId: item.product._id,
+        quantity: item.productQuantity,
+        price: item.product.productPrice,
+      }));
+
+      // ✅ Calculate total
+      // ❌ Issue: Client-side price calculation only
+      const subtotal = cart.reduce(
+        (acc, curr) => acc + curr.product.productPrice * curr.productQuantity,
+        0,
+      );
+      const totalPrice = subtotal + DELIVERY_CHARGES;
+
+      // ✅ Prepare order data
+      const orderData = {
+        products: products,
+        user: userDetails[0]._id,
+        address: selectedAddressId,
+        totalPrice: totalPrice,
+        orderStatus: "Placed",
+      };
+
+      console.log("📤 Order Data:", orderData);
+
+      // ✅ Call handlePayment
+      const result = await handlePayment(orderData);
+
+      console.log("✅ Order Result:", result);
+
+      if (result) {
+        await deleteAllCart();
+        toast.success("Order placed successfully! 🎉");
+      }
+    } catch (error) {
+      console.error("❌ Order placement error:", error);
+      toast.error(error.message || "Failed to place order");
+    }
   };
 
   const handleEditClick = (addr) => {
@@ -61,14 +105,20 @@ const Checkout = () => {
     setEditingAddressId(null);
     setAddress("");
     setLocation("");
+    toast.success("Address updated successfully!");
   };
+
 
   const handleDelete = (id) => {
     deletedUserAddress(id);
-
     if (selectedAddressId === id) {
-      setSelectedAddressId(null);
+      // Auto-select next available address
+      const remainingAddresses = userAddress.filter((addr) => addr._id !== id);
+      setSelectedAddressId(
+        remainingAddresses.length > 0 ? remainingAddresses[0]._id : null,
+      );
     }
+    toast.success("Address deleted successfully!");
   };
 
   const DELIVERY_CHARGES = 125;
@@ -195,42 +245,50 @@ const Checkout = () => {
               <div className="card-body">
                 <h5 className="fw-bold mb-3">Delivery Address</h5>
 
-                {userAddress.map((addr) => (
-                  <div key={addr._id} className="border rounded p-3 mb-3">
-                    <div className="d-flex justify-content-between">
-                      <div className="d-flex gap-2">
-                        <input
-                          type="radio"
-                          checked={selectedAddressId === addr._id}
-                          onChange={() => setSelectedAddressId(addr._id)}
-                        />
+                {userAddress.length === 0 ? (
+                  <p className="text-muted">
+                    No addresses saved. Please add one.
+                  </p>
+                ) : (
+                  userAddress.map((addr) => (
+                    <div key={addr._id} className="border rounded p-3 mb-3">
+                      <div className="d-flex justify-content-between">
+                        <div className="d-flex gap-2">
+                          <input
+                            type="radio"
+                            checked={selectedAddressId === addr._id}
+                            onChange={() => setSelectedAddressId(addr._id)}
+                          />
 
-                        <div>
-                          <p className="mb-1 fw-semibold">{addr.address}</p>
-                          <small className="text-muted">{addr.location}</small>
+                          <div>
+                            <p className="mb-1 fw-semibold">{addr.address}</p>
+                            <small className="text-muted">
+                              {addr.location}
+                            </small>
+                          </div>
+                        </div>
+
+                        <div className="d-flex gap-2 flex-wrap">
+                          <button
+                            className="btn btn-outline-warning btn-sm"
+                            style={{ width: "120px", height: "38px" }}
+                            onClick={() => handleEditClick(addr)}
+                          >
+                            Edit
+                          </button>
+
+                          <button
+                            className="btn btn-outline-danger btn-sm"
+                            style={{ width: "120px", height: "38px" }}
+                            onClick={() => handleDelete(addr._id)}
+                          >
+                            Delete
+                          </button>
                         </div>
                       </div>
-
-                      <div className="d-flex gap-2 flex-wrap">
-                        <button
-                          className="btn btn-outline-warning btn-sm"
-                          style={{ width: "120px", height: "38px" }}
-                          onClick={() => handleEditClick(addr)}
-                        >
-                          Edit
-                        </button>
-
-                        <button
-                          className="btn btn-outline-danger btn-sm"
-                          style={{ width: "120px", height: "38px" }}
-                          onClick={() => handleDelete(addr._id)}
-                        >
-                          Delete
-                        </button>
-                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
           </div>
@@ -242,12 +300,12 @@ const Checkout = () => {
 
                 <div className="d-flex justify-content-between mb-2">
                   <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>₹{subtotal.toFixed(2)}</span>
                 </div>
 
                 <div className="d-flex justify-content-between mb-2">
                   <span>Delivery</span>
-                  <span>$125</span>
+                  <span>₹{DELIVERY_CHARGES}</span>
                 </div>
 
                 <hr />
@@ -257,13 +315,30 @@ const Checkout = () => {
                   <span>₹{totalPrice.toFixed(2)}</span>
                 </div>
 
+                {!selectedAddressId && (
+                  <div className="alert alert-warning text-center py-2">
+                    Please select a delivery address
+                  </div>
+                )}
+
                 {selectedAddressId && cart.length > 0 && (
                   <button
                     className="btn btn-success w-100"
                     onClick={placeOrderFromCart}
                     disabled={loading}
                   >
-                    {loading ? "Processing..." : "Proceed to Payment"}
+                    {loading ? (
+                      <>
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                          aria-hidden="true"
+                        ></span>
+                        Processing...
+                      </>
+                    ) : (
+                      "Proceed to Payment"
+                    )}
                   </button>
                 )}
               </div>

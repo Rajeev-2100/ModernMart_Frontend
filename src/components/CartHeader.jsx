@@ -23,12 +23,13 @@ const CartHeader = () => {
     getAllWishListDetail();
   }
 
-
   return (
     <header className="bg-body-tertiary shadow-sm px-4 px-lg-0">
       <nav className="navbar navbar-expand-lg container">
         <Link className="navbar-brand fw-bold" to="/">
-          <h2><b>Modern Mart</b></h2>
+          <h2>
+            <b>Modern Mart</b>
+          </h2>
         </Link>
 
         <button
@@ -40,13 +41,12 @@ const CartHeader = () => {
           <span className="navbar-toggler-icon"></span>
         </button>
 
-        <div className="collapse navbar-collapse justify-content-end" id="navbarContent">
-    
-
+        <div
+          className="collapse navbar-collapse justify-content-end"
+          id="navbarContent"
+        >
           <div className="d-flex flex-row flex-lg-row align-items-end align-items-lg-center gap-3 ms-lg-3">
-            <Link to={`/userProfile`}>
-              <i className="bi bi-person fs-4 text-dark"></i>
-            </Link>
+            
 
             <Link
               to={`/wishList`}
@@ -62,7 +62,8 @@ const CartHeader = () => {
 
             <Link
               to={`/cart`}
-              className="text-decoration-none text-dark d-flex align-items-center gap-1"            >
+              className="text-decoration-none text-dark d-flex align-items-center gap-1"
+            >
               <i className="bi bi-cart fs-4"></i>
               <span className="d-lg-inline d-none">Cart</span>({cart.length})
             </Link>
@@ -73,6 +74,14 @@ const CartHeader = () => {
             >
               <i className="bi bi-box-fill fs-4"></i>
               <span className="d-lg-inline d-none">Order</span>
+            </Link>
+
+            <Link
+              to={`/userProfile`}
+              className="text-decoration-none text-dark d-flex align-items-center gap-1"
+            >
+              <i class="bi bi-person-circle fs-4"></i>
+              <span className="d-lg-inline d-none">User</span>
             </Link>
           </div>
         </div>

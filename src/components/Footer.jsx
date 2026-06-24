@@ -1,11 +1,16 @@
 const Footer = () => {
-    return (
-        <>
-            <footer className="bg-body-tertiary">
-                <p className="container d-flex justify-content-center py-2">@ Lorem ipsum dolor sit amet.</p>
-            </footer>
-        </>
-    )
-}
+  return (
+    <footer className="bg-white text-dark py-3 mt-auto w-100 shadow">
+      <div className="container">
+        <div className="text-center">
+          <h6 className="mb-1 fs-6">Ecommerce Dashboard</h6>
+          <small className="text-secondary">
+            © {new Date().getFullYear()} All rights reserved | Built with React
+          </small>
+        </div>
+      </div>
+    </footer>
+  );
+};
 
-export default Footer
+export default Footer;

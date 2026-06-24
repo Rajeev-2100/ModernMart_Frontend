@@ -153,13 +153,13 @@ const ProductListing = () => {
           }
         }
 
-        @media (min-width: 1210px) and (max-width: 1439.98px) {
+        @media (min-width: 1210px) and (max-width: 2140px) {
           .pl-product-grid {
             grid-template-columns: repeat(3, 1fr);
           }
         }
 
-          @media (min-width: 1440px) {
+          @media (min-width: 2140px) {
           .pl-product-grid {
             grid-template-columns: repeat(4, 1fr);
           }
@@ -180,9 +180,16 @@ const ProductListing = () => {
 
         @media (min-width: 1440px) {
           .pl-product-grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
+        }
+        
+        @media (min-width: 2450px) {
+          .pl-product-grid {
             grid-template-columns: repeat(4, 1fr);
           }
         }
+        
 
 
         .pl-product-grid {

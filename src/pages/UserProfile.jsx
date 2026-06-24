@@ -1,9 +1,14 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useMemo } from "react";
 import UserContext from "../useContext/User.jsx";
 import Footer from "../components/Footer";
-import Header from "../components/Header";
+import OrderContext from "../useContext/Order.jsx";
+import { useNavigate } from "react-router-dom";
+import MainHeader from "../components/MainHeader.jsx";
 
 const UserProfile = () => {
+  const { orders } = useContext(OrderContext);
+  const navigate = useNavigate();
+
   const {
     userDetails,
     deletedMessage,
@@ -23,139 +28,302 @@ const UserProfile = () => {
   } = useContext(UserContext);
 
   const [selectedAddressId, setSelectedAddressId] = useState(null);
+  const [sortOrder, setSortOrder] = useState("newest");
+
+  const handleCardClick = (orderId) => {
+    navigate(`/order/${orderId}`); // ✅ Navigate to specific order details
+  };
+
+  const sortedOrders = useMemo(() => {
+    if (!orders || orders.length === 0) return [];
+
+    const sorted = [...orders].sort((a, b) => {
+      const dateA = new Date(a.createdAt || a.date || 0);
+      const dateB = new Date(b.createdAt || b.date || 0);
+
+      if (sortOrder === "newest") {
+        return dateB - dateA;
+      } else {
+        return dateA - dateB;
+      }
+    });
+
+    return sorted;
+  }, [orders, sortOrder]);
+
+  // Format date
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
+  // ✅ Helper function to get product display info
+  const getProductDisplayInfo = (order) => {
+    // Handle products array (new structure)
+    if (order.products && order.products.length > 0) {
+      const firstProduct = order.products[0];
+      const productName =
+        firstProduct.product?.productName || firstProduct.name || "Product";
+
+      // If multiple products, show count
+      if (order.products.length > 1) {
+        return {
+          name: `${productName} + ${order.products.length - 1} more`,
+          count: order.products.length,
+          isMultiProduct: true,
+        };
+      }
+
+      return {
+        name: productName,
+        count: 1,
+        isMultiProduct: false,
+      };
+    }
+
+    // Handle single product (old structure)
+    if (order.product) {
+      return {
+        name:
+          order.product.productName || order.product.name || "Order Details",
+        count: 1,
+        isMultiProduct: false,
+      };
+    }
+
+    return {
+      name: "Order Details",
+      count: 0,
+      isMultiProduct: false,
+    };
+  };
 
   return (
     <>
-      <Header />
+      <MainHeader/>
       <main className="container p-5">
-        {userDetails?.map((user) => (
-          <>
-            <h2>User Profile</h2>
-            <p>Name: {user.name}</p>
-            <p>Email: {user.email}</p>
-            <p>Phone Number: {user.number}</p>
-          </>
-        ))}
-
-        <form onSubmit={formHandler} className="mt-5">
-          <h5>Updated the form Data</h5>
-          <div className="mb-3">
-            <label htmlFor="address" className="form-label">
-              {editingAddressId ? "Update Address:" : "Change Address:"}
-            </label>
-            <input
-              id="address"
-              type="text"
-              className="form-control"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="location" className="form-label">
-              {editingAddressId ? "Update Location:" : "Change Location:"}
-            </label>
-            <input
-              id="location"
-              type="text"
-              className="form-control"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              required
-            />
-          </div>
-          <button type="submit" className="btn btn-primary">
-            {editingAddressId ? "Update Address" : "Save Address"}
-          </button>
-          {editingAddressId && (
-            <button
-              type="button"
-              className="btn btn-secondary ms-2"
-              onClick={() => {
-                setEditingAddressId(null);
-                setAddress("");
-                setLocation("");
-              }}
-            >
-              Cancel
-            </button>
-          )}
-          {formSubmitted && (
-            <div className="alert alert-success mt-3">{formSubmitted}</div>
-          )}
-        </form>
-
-        {formSubmitted && (
-          <div className="success-message">
-            <p>{formSubmitted}</p>
-            <button onClick={() => setFormSubmitted("")}>OK</button>
-          </div>
-        )}
-
-        {deletedMessage && (
-          <div className="success-message">
-            <p>You Address is Deleted</p>
-            <button onClick={() => setDeletedMessage("")}>DELETE Btn</button>
-          </div>
-        )}
-
-        <div className="mt-5">
-          <h6>Choose Delivery Address</h6>
-          {userDetails[0] && (
-            <div className="mb-4">
-              <h6>{userDetails[0].name}</h6>
-              <ul className="list-group">
-                {userAddress.map((addr) => (
-                  <li key={addr._id} className="list-group-item">
-                    <div className="d-flex align-items-start">
-                      <div className="form-check me-3 mt-1">
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="deliveryAddress"
-                          id={`addr-${addr._id}`}
-                          checked={selectedAddressId === addr._id}
-                          onChange={() => setSelectedAddressId(addr._id)}
-                        />
-                      </div>
-                      <div className="flex-grow-1">
-                        <p>
-                          {addr.address} {addr.location}
-                        </p>
-                      </div>
-                      <div className="d-flex gap-2">
-                        <button
-                          className="btn btn-danger btn-sm"
-                          onClick={() => handleDelete(addr._id)}
-                        >
-                          DELETE Addr
-                        </button>
-                        <button
-                          className="btn btn-warning btn-sm"
-                          onClick={() => handleEditClick(addr)}
-                        >
-                          Update Addr
-                        </button>
-                      </div>
+        {/* User Profile Section */}
+        <section className="profile-details-section mb-5">
+          <div className="card shadow-sm">
+            <div className="card-header bg-primary text-white">
+              <h2 className="mb-0">User Profile</h2>
+            </div>
+            <div className="card-body">
+              {userDetails?.map((user) => (
+                <div key={user._id}>
+                  <div className="row mb-3">
+                    <div className="col-md-6">
+                      <p>
+                        <strong>Name:</strong> {user.name}
+                      </p>
                     </div>
-                  </li>
-                ))}
-                {deletedMessage && (
-                  <p className="p-3 alert alert-info mt-2">{deletedMessage}</p>
-                )}
-              </ul>
+                    <div className="col-md-6">
+                      <p>
+                        <strong>Email:</strong> {user.email}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col-md-6">
+                      <p>
+                        <strong>Phone Number:</strong> {user.number}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Order History Section - Simple List Style */}
+        <section className="order-history-section mb-5">
+          {sortedOrders.length === 0 ? (
+            <div className="alert alert-info text-center shadow-sm">
+              <i className="bi bi-inbox me-2"></i>
+              No orders found. Start shopping now!
+            </div>
+          ) : (
+            <div className="card shadow-sm border-0 rounded-4 overflow-hidden">
+              {/* Header */}
+              <div
+                className="card-header border-0 py-3"
+                style={{ backgroundColor: "#00BCD4" }}
+              >
+                <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                  <h4 className="text-white mb-0 px-2 fw-medium">
+                    <i className="bi bi-clock-history me-2"></i>Order History
+                  </h4>
+                  <div className="d-flex align-items-center gap-2">
+                    <button
+                      onClick={() =>
+                        setSortOrder(
+                          sortOrder === "newest" ? "oldest" : "newest",
+                        )
+                      }
+                      className="btn btn-light btn-sm rounded-pill px-3"
+                      style={{ fontSize: "0.8rem" }}
+                    >
+                      <i className="bi bi-arrow-up-down me-1"></i>
+                      {sortOrder === "newest" ? "Newest First" : "Oldest First"}
+                    </button>
+                    <span className="badge bg-white text-dark rounded-pill px-3 py-2">
+                      {sortedOrders.length} Orders
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Fixed Height Container with Scroll */}
+              <div
+                className="card-body p-0 overflow-auto custom-scrollbar"
+                style={{ maxHeight: "600px" }}
+              >
+                <div className="p-3 p-md-4">
+                  {sortedOrders.map((order) => {
+                    const productInfo = getProductDisplayInfo(order);
+
+                    return (
+                      <div
+                        key={order._id}
+                        className="order-item border-bottom pb-3 mb-3"
+                        onClick={() => handleCardClick(order._id)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        {/* Product Name - Large Heading */}
+                        <h3
+                          className="fw-bold mb-1 text-dark"
+                          style={{ fontSize: "1.1rem" }}
+                        >
+                          {productInfo.name}
+                          {productInfo.isMultiProduct && (
+                            <span
+                              className="badge bg-secondary ms-2"
+                              style={{ fontSize: "0.7rem" }}
+                            >
+                              {productInfo.count} items
+                            </span>
+                          )}
+                        </h3>
+
+                        {/* Quantity and Price */}
+                        <div className="d-flex align-items-center gap-4 mb-1 flex-wrap">
+                          <span
+                            className="text-secondary"
+                            style={{ fontSize: "0.9rem" }}
+                          >
+                            <strong>Items:</strong> {productInfo.count}
+                          </span>
+                          <span
+                            className="text-secondary"
+                            style={{ fontSize: "0.9rem" }}
+                          >
+                            <strong>Total:</strong> ₹
+                            {order.totalPrice?.toLocaleString() || 0}
+                          </span>
+                        </div>
+
+                        {/* Order Date and Status */}
+                        <div className="d-flex align-items-center gap-3 flex-wrap">
+                          <span
+                            className="text-muted"
+                            style={{ fontSize: "0.85rem" }}
+                          >
+                            <i className="bi bi-calendar3 me-1"></i>
+                            Order Placed on{" "}
+                            {formatDate(order.createdAt || order.date)}
+                          </span>
+
+                          {/* Status Badge */}
+                          <span
+                            className={`badge rounded-pill px-3 py-2 ${
+                              order.orderStatus === "Delivered"
+                                ? "bg-success-subtle text-success border border-success"
+                                : order.orderStatus === "Confirmed"
+                                  ? "bg-primary-subtle text-primary border border-primary"
+                                  : order.orderStatus === "Processing"
+                                    ? "bg-info-subtle text-info border border-info"
+                                    : order.orderStatus === "Shipped"
+                                      ? "bg-secondary-subtle text-secondary border border-secondary"
+                                      : order.orderStatus === "Placed" ||
+                                          order.orderStatus === "Pending"
+                                        ? "bg-warning-subtle text-warning-emphasis border border-warning"
+                                        : order.orderStatus === "Cancelled"
+                                          ? "bg-danger-subtle text-danger border border-danger"
+                                          : "bg-light-subtle text-dark border"
+                            }`}
+                            style={{ fontSize: "0.7rem" }}
+                          >
+                            {order.orderStatus || "Pending"}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="card-footer bg-white border-0 py-3 text-center text-muted small">
+                Showing {sortedOrders.length} orders in total
+              </div>
             </div>
           )}
-        </div>
-
-        {selectedAddressId > 0 && (
-          <div className="text-center mt-4">
-            <button className="btn btn-success btn-lg"></button>
-          </div>
-        )}
+        </section>
       </main>
       <Footer />
+
+      {/* Custom CSS */}
+      <style>{`
+        .order-item {
+          transition: all 0.2s ease;
+          padding: 12px 0;
+        }
+        .order-item:last-child {
+          border-bottom: none !important;
+          margin-bottom: 0 !important;
+        }
+        .order-item:hover {
+          background-color: #f8f9fa;
+          padding-left: 10px;
+          padding-right: 10px;
+          border-radius: 8px;
+          transform: translateX(5px);
+          box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #c1c7cd;
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #a8b0b8;
+        }
+        .bg-success-subtle { background-color: #d4edda !important; }
+        .bg-primary-subtle { background-color: #cce5ff !important; }
+        .bg-info-subtle { background-color: #d1ecf1 !important; }
+        .bg-warning-subtle { background-color: #fff3cd !important; }
+        .bg-danger-subtle { background-color: #f8d7da !important; }
+        .bg-secondary-subtle { background-color: #e2e3e5 !important; }
+        .bg-light-subtle { background-color: #f8f9fa !important; }
+        .border-success { border-color: #28a745 !important; }
+        .border-primary { border-color: #007bff !important; }
+        .border-info { border-color: #17a2b8 !important; }
+        .border-warning { border-color: #ffc107 !important; }
+        .border-danger { border-color: #dc3545 !important; }
+        .border-secondary { border-color: #6c757d !important; }
+      `}</style>
     </>
   );
 };
