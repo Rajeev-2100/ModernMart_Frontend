@@ -81,6 +81,14 @@ const ProductListing = () => {
     }
   };
 
+  // Add this function to handle category filtering from the URL
+  const getCategoryTitle = () => {
+    if (categoryName) {
+      return `Products in "${categoryName}" Category`;
+    }
+    return "All Products";
+  };
+
   return (
     <>
       <Header setSearchTerm={setSearchTerm} />
@@ -159,12 +167,11 @@ const ProductListing = () => {
           }
         }
 
-          @media (min-width: 2140px) {
+        @media (min-width: 2140px) {
           .pl-product-grid {
             grid-template-columns: repeat(4, 1fr);
           }
         }
-
 
         @media (min-width: 992px) {
           .pl-product-grid {
@@ -189,8 +196,6 @@ const ProductListing = () => {
             grid-template-columns: repeat(4, 1fr);
           }
         }
-        
-
 
         .pl-product-grid {
           display: grid;
@@ -201,6 +206,16 @@ const ProductListing = () => {
       <main className="container py-4 py-md-5">
         {loading && (
           <p className="text-center">Loading...</p>
+        )}
+
+        {/* Category Header */}
+        {categoryName && (
+          <div className="mb-4">
+            <h2 className="mb-2">{getCategoryTitle()}</h2>
+            <p className="text-muted">
+              {finalProducts?.length || 0} products found in this category
+            </p>
+          </div>
         )}
 
         <button
@@ -444,8 +459,7 @@ const ProductListing = () => {
             )}
 
             <h5 className="mb-4">
-              Show All Products (
-              {finalProducts?.length || 0} Products)
+              {categoryName ? `Showing ${finalProducts?.length || 0} Products` : `Show All Products (${finalProducts?.length || 0} Products)`}
             </h5>
 
             <div className="pl-product-grid">

@@ -9,167 +9,656 @@ import { toast } from "react-toastify";
 const CategoryPage = () => {
   const { categoryName } = useParams();
   const navigate = useNavigate();
-
-  const { getCategory, categoryData } = useContext(ProductContext);
-  const { addToCart } = useContext(CartContext);
-
-  const [selectedSizes, setSelectedSizes] = useState({});
   const [addedProductId, setAddedProductId] = useState(null);
+  const [selectedSize, setSelectedSize] = useState({});
+  const [showFilters, setShowFilters] = useState(false);
 
-  useEffect(() => {
+  const {
+    setSearchTerm,
+    price,
+    categories,
+    setCategories,
+    setRating,
+    setPrice,
+    setSortBy,
+    rating,
+    sortBy,
+    loading,
+    error,
+    sortedProducts,
+  } = useContext(ProductContext);
+
+  const { addToCart, addToWishList } = useContext(CartContext);
+
+  // Filter products by category
+  const finalProducts = categoryName
+    ? sortedProducts.filter(
+        (product) => product.categoryField?.categoryField === categoryName,
+      )
+    : sortedProducts;
+
+  if (error) {
+    return (
+      <>
+        <Header />
+        <p className="text-center text-danger mt-5">
+          {error.message}
+        </p>
+        <Footer />
+      </>
+    );
+  }
+
+  const removeCategory = (cateRemove) => {
+    setCategories(categories.filter((cate) => cate !== cateRemove));
+  };
+
+  const removePrice = () => {
+    setPrice("");
+  };
+
+  const removeRating = () => {
+    setRating(0);
+  };
+
+  const hasActiveFilters = () => {
+    return (
+      price !== "" ||
+      categories.length > 0 ||
+      rating > 0
+    );
+  };
+
+  const handleCategoryChange = (event) => {
+    const checked = event.target.checked;
+    const value = event.target.value;
+
+    if (checked) {
+      setCategories([...categories, value]);
+    } else {
+      setCategories(
+        categories.filter((item) => item !== value),
+      );
+    }
+  };
+
+  const getCategoryTitle = () => {
     if (categoryName) {
-      getCategory(categoryName);
+      return `Products in "${categoryName}" Category`;
     }
-  }, [categoryName]);
-
-  const handleAddToCart = (product) => {
-    const size = selectedSizes[product._id];
-
-    if (!size) {
-      toast.error("Please select a size before adding to cart");
-      return;
-    }
-
-    addToCart(product, size);
-    setAddedProductId(product._id);
-    toast.success(`${product.productName} added to cart!`);
-
-    setSelectedSizes((prev) => ({
-      ...prev,
-      [product._id]: "",
-    }));
-
-    setTimeout(() => {
-      setAddedProductId(null);
-    }, 2000);
+    return "All Products";
   };
 
   return (
     <>
-      <div className="d-flex flex-column min-vh-100">
-        <Header />
+      <Header setSearchTerm={setSearchTerm} />
 
-        <main className="flex-grow-1 bg-light py-5">
-          {/* Category Header Section */}
-          <div className="container-lg mb-5">
-            <div className="bg-white p-3 rounded-3 shadow-sm border-start border-5 border-primary">
-              <button
-                className="btn btn-link text-primary text-decoration-none fw-bold mb-3 p-0"
-                onClick={() => navigate("/")}
-              >
-                ← Back to Home
-              </button>
-              <h1 className="display-6 fw-bold m-0 text-dark ">{categoryName}</h1>
-              <p className="text-muted fs-6">
-                Explore our exclusive {categoryName?.toLowerCase()} products
-              </p>
+      <style>{`
+        .pl-layout {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+
+        .pl-filter-panel {
+          width: 100%;
+          height: fit-content;
+        }
+
+        .pl-filter-toggle {
+          display: none;
+        }
+
+        .pl-product-card {
+          width: 100%;
+        }
+
+        @media (max-width: 575.98px) {
+          .pl-product-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+
+        @media (min-width: 576px) and (max-width: 767.98px) {
+          .pl-product-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+        }
+
+        @media (max-width: 767.98px) {
+          .pl-filter-toggle {
+            display: flex;
+          }
+
+          .pl-filter-panel {
+            display: none;
+          }
+
+          .pl-filter-panel.pl-filter-panel--open {
+            display: flex;
+          }
+        }
+
+        @media (min-width: 768px) {
+          .pl-layout {
+            flex-direction: row;
+          }
+
+          .pl-filter-panel {
+            min-width: 260px;
+            width: 260px;
+            flex-shrink: 0;
+          }
+
+          .pl-product-grid {
+            grid-template-columns: repeat(1, 1fr);
+          }
+        }
+
+        @media (min-width: 992px) and (max-width: 1209.98px) {
+          .pl-product-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+
+        @media (min-width: 1210px) and (max-width: 2140px) {
+          .pl-product-grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
+        }
+
+        @media (min-width: 2140px) {
+          .pl-product-grid {
+            grid-template-columns: repeat(4, 1fr);
+          }
+        }
+
+        @media (min-width: 992px) {
+          .pl-product-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+
+        @media (min-width: 1200px) {
+          .pl-product-grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
+        }
+
+        @media (min-width: 1440px) {
+          .pl-product-grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
+        }
+        
+        @media (min-width: 2450px) {
+          .pl-product-grid {
+            grid-template-columns: repeat(4, 1fr);
+          }
+        }
+
+        .pl-product-grid {
+          display: grid;
+          gap: 1.5rem;
+        }
+
+        .category-header {
+          background: white;
+          padding: 1.5rem;
+          border-radius: 0.5rem;
+          box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+          border-left: 5px solid #0d6efd;
+          margin-bottom: 2rem;
+        }
+
+        .back-button {
+          background: none;
+          border: none;
+          color: #0d6efd;
+          font-weight: bold;
+          padding: 0;
+          margin-bottom: 0.75rem;
+          cursor: pointer;
+          text-decoration: underline;
+        }
+
+        .back-button:hover {
+          color: #0a58ca;
+        }
+      `}</style>
+
+      <main className="container py-4 py-md-5">
+        {loading && (
+          <p className="text-center">Loading...</p>
+        )}
+
+        {/* Category Header with Back Button */}
+        <div className="category-header">
+          <button
+            className="back-button"
+            onClick={() => navigate("/")}
+          >
+            ← Back to Home
+          </button>
+          <h1 className="display-6 fw-bold m-0 text-dark">
+            {categoryName}
+          </h1>
+          <p className="text-muted fs-6">
+            Explore our exclusive {categoryName?.toLowerCase()} products
+          </p>
+        </div>
+
+        {/* Category Header */}
+        {categoryName && (
+          <div className="mb-4">
+            <h2 className="mb-2">{getCategoryTitle()}</h2>
+            <p className="text-muted">
+              {finalProducts?.length || 0} products found in this category
+            </p>
+          </div>
+        )}
+
+        <button
+          className="btn btn-outline-dark w-100 mb-3 pl-filter-toggle align-items-center justify-content-between"
+          onClick={() => setShowFilters((prev) => !prev)}
+        >
+          <span>
+            <i className="bi bi-sliders me-2"></i>
+            Filter & Sort
+            {hasActiveFilters() && (
+              <span className="badge bg-dark ms-2">
+                {categories.length + (price !== "" ? 1 : 0) + (rating > 0 ? 1 : 0)}
+              </span>
+            )}
+          </span>
+          <i className={`bi bi-chevron-${showFilters ? "up" : "down"}`}></i>
+        </button>
+
+        <div className="pl-layout">
+          <div
+            className={`pl-filter-panel flex-column align-items-start bg-light p-3 rounded shadow-sm ${
+              showFilters ? "pl-filter-panel--open" : ""
+            }`}
+          >
+            <h4 className="mb-4 d-none d-md-block">
+              <b>Filter Products</b>
+            </h4>
+
+            <div className="mb-4 w-100">
+              <h5>Price:</h5>
+
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  name="price"
+                  id="price50"
+                  checked={price === 50}
+                  onChange={() => setPrice(50)}
+                />
+                <label
+                  className="form-check-label"
+                  htmlFor="price50"
+                >
+                  $50 & below
+                </label>
+              </div>
+
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  name="price"
+                  id="price150"
+                  checked={price === 150}
+                  onChange={() => setPrice(150)}
+                />
+                <label
+                  className="form-check-label"
+                  htmlFor="price150"
+                >
+                  $150 & below
+                </label>
+              </div>
+
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  name="price"
+                  id="price200"
+                  checked={price === 200}
+                  onChange={() => setPrice(200)}
+                />
+                <label
+                  className="form-check-label"
+                  htmlFor="price200"
+                >
+                  $200 & below
+                </label>
+              </div>
             </div>
+
+            <div className="mb-4 w-100">
+              <h5>Category:</h5>
+
+              {[
+                "Women",
+                "Men",
+                "Child",
+                "Men Sport",
+                "Women Sport",
+              ].map((category) => (
+                <div
+                  className="form-check"
+                  key={category}
+                >
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id={category}
+                    value={category}
+                    checked={categories.includes(category)}
+                    onChange={handleCategoryChange}
+                  />
+
+                  <label
+                    className="form-check-label"
+                    htmlFor={category}
+                  >
+                    {category}
+                  </label>
+                </div>
+              ))}
+            </div>
+
+            <div className="mb-4 w-100">
+              <h5>Rating:</h5>
+
+              {[4.8, 4.6, 4.4, 4.2].map((rate) => (
+                <div
+                  className="form-check"
+                  key={rate}
+                >
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="rating"
+                    id={`rating${rate}`}
+                    checked={rating === rate}
+                    onChange={() => setRating(rate)}
+                  />
+
+                  <label
+                    className="form-check-label"
+                    htmlFor={`rating${rate}`}
+                  >
+                    {rate} Stars & above
+                  </label>
+                </div>
+              ))}
+            </div>
+
+            <div className="mb-4 w-100">
+              <h5>Sort By</h5>
+
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  name="sortBy"
+                  id="lowToHigh"
+                  checked={sortBy === "LOW_TO_HIGH"}
+                  onChange={() =>
+                    setSortBy("LOW_TO_HIGH")
+                  }
+                />
+
+                <label
+                  className="form-check-label"
+                  htmlFor="lowToHigh"
+                >
+                  Price - Low to High
+                </label>
+              </div>
+
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  name="sortBy"
+                  id="highToLow"
+                  checked={sortBy === "HIGH_TO_LOW"}
+                  onChange={() =>
+                    setSortBy("HIGH_TO_LOW")
+                  }
+                />
+
+                <label
+                  className="form-check-label"
+                  htmlFor="highToLow"
+                >
+                  Price - High To Low
+                </label>
+              </div>
+            </div>
+
+            <button
+              className="btn btn-outline-dark w-100"
+              onClick={() => {
+                setPrice("");
+                setCategories([]);
+                setRating(0);
+                setSortBy("");
+              }}
+            >
+              Clear Filters
+            </button>
           </div>
 
-          {/* Products Grid */}
-          <div className="container-lg">
-            {categoryData.length === 0 ? (
-              <div className="text-center py-5 bg-white rounded">
-                <div
-                  className="spinner-border text-primary mb-3"
-                  role="status"
-                >
-                  <span className="visually-hidden">Loading...</span>
-                </div>
-                <p className="text-muted fs-6">Loading products...</p>
-              </div>
-            ) : (
-              <div className="row g-4">
-                {categoryData.map((product) => (
-                  <div className="col-12 col-sm-6 col-lg-4" key={product._id}>
-                    <div className="card h-100 shadow-sm border-0 rounded-3 overflow-hidden">
-                      {/* Product Image Container */}
-                      <div
-                        className="position-relative bg-light"
-                        style={{
-                          height: "250px",
-                          overflow: "hidden",
-                        }}
-                      >
-                        <img
-                          src={product.productImage}
-                          className="w-100 h-100"
-                          alt={product.productName}
-                          style={{ objectFit: "cover" }}
-                        />
-                      </div>
+          <div className="flex-grow-1" style={{ minWidth: 0 }}>
+            {hasActiveFilters() && (
+              <div className="mb-4">
+                <h5>
+                  <strong>Active Filters:</strong>
+                </h5>
 
-                      {/* Card Body */}
-                      <div className="card-body d-flex flex-column pt-4 pb-4">
-                        {/* Product Name */}
-                        <h5 className="card-title fw-bold text-dark mb-2 lh-base">
-                          {product.productName}
-                        </h5>
-
-                        {/* Product Price */}
-                        <p className="card-text text-primary fw-bold fs-5 mb-4">
-                          <span className="text-dark">Product Price:</span> ${product.productPrice}
-                        </p>
-
-                        {/* Size Selector */}
-                        <div className="mb-4 flex-shrink-0">
-                          <label className="form-label fw-bold small text-uppercase text-muted mb-2 d-block">
-                            Select Size
-                          </label>
-                          <select
-                            value={selectedSizes[product._id] || ""}
-                            className="form-select form-select-sm"
-                            onChange={(e) =>
-                              setSelectedSizes((prev) => ({
-                                ...prev,
-                                [product._id]: e.target.value,
-                              }))
-                            }
-                            aria-label="Select product size"
-                          >
-                            <option value="">Choose size</option>
-                            <option value="S">S</option>
-                            <option value="M">M</option>
-                            <option value="L">L</option>
-                            <option value="XL">XL</option>
-                            <option value="XXL">XXL</option>
-                          </select>
-                        </div>
-
-                        {/* Action Buttons */}
-                        <div className="d-grid gap-2">
-                          <button
-                            className={`btn fw-bold py-2 ${
-                              addedProductId === product._id
-                                ? "btn-success"
-                                : "btn-primary"
-                            }`}
-                            onClick={() => handleAddToCart(product)}
-                            aria-label="Add product to cart"
-                          >
-                            {addedProductId === product._id
-                              ? "✓ Added to Cart"
-                              : "Add to Cart"}
-                          </button>
-
-                          <Link
-                            to={`/productPage/${product._id}`}
-                            className="btn btn-outline-primary fw-bold py-2 text-decoration-none"
-                          >
-                            View Details
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                {categories.map((cat) => (
+                  <span
+                    key={cat}
+                    className="badge bg-dark me-2 mb-2"
+                    style={{ cursor: "pointer" }}
+                    onClick={() =>
+                      removeCategory(cat)
+                    }
+                  >
+                    {cat} ✖
+                  </span>
                 ))}
+
+                {price !== "" && (
+                  <span
+                    className="badge bg-dark me-2 mb-2"
+                    style={{ cursor: "pointer" }}
+                    onClick={removePrice}
+                  >
+                    ${price} & below ✖
+                  </span>
+                )}
+
+                {rating > 0 && (
+                  <span
+                    className="badge bg-dark me-2 mb-2"
+                    style={{ cursor: "pointer" }}
+                    onClick={removeRating}
+                  >
+                    {rating}+ ✖
+                  </span>
+                )}
               </div>
             )}
-          </div>
-        </main>
 
-        <Footer />
-      </div>
+            <h5 className="mb-4">
+              {categoryName ? `Showing ${finalProducts?.length || 0} Products` : `Show All Products (${finalProducts?.length || 0} Products)`}
+            </h5>
+
+            <div className="pl-product-grid">
+              {finalProducts?.map((product) => (
+                <div
+                  key={product._id}
+                  className="card p-3 shadow-sm pl-product-card"
+                >
+                  <div className="position-relative">
+                    <i
+                      className="bi bi-heart-fill text-danger fs-3 position-absolute top-0 end-0 m-2"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        if (
+                          !selectedSize[product._id]
+                        ) {
+                          toast(
+                            "Please Select The Size",
+                          );
+                          return;
+                        }
+
+                        addToWishList(
+                          product,
+                          selectedSize[
+                            product._id
+                          ],
+                        );
+
+                        setAddedProductId(
+                          product._id,
+                        );
+                      }}
+                    ></i>
+
+                    <img
+                      src={product.productImage}
+                      className="card-img-top img-fluid object-fit-cover"
+                      alt={product.productName}
+                      style={{ height: "250px" }}
+                    />
+                  </div>
+
+                  <div className="card-body d-flex flex-column">
+                    <h5 className="card-title text-center">
+                      {product.productName}
+                    </h5>
+
+                    <div className="d-flex justify-content-between mb-3">
+                      <h6>
+                        $
+                        {product.productPrice}
+                      </h6>
+
+                      <h6>
+                        ⭐ {product.rating}
+                      </h6>
+                    </div>
+
+                    {/* Size */}
+                    <select
+                      value={
+                        selectedSize[
+                          product._id
+                        ] || ""
+                      }
+                      className="form-select mb-3"
+                      onChange={(e) =>
+                        setSelectedSize({
+                          ...selectedSize,
+                          [product._id]:
+                            e.target.value,
+                        })
+                      }
+                    >
+                      <option value="">
+                        Select Size
+                      </option>
+                      <option value="S">
+                        S
+                      </option>
+                      <option value="M">
+                        M
+                      </option>
+                      <option value="L">
+                        L
+                      </option>
+                      <option value="XL">
+                        XL
+                      </option>
+                      <option value="XXL">
+                        XXL
+                      </option>
+                    </select>
+
+                    <div className="d-flex flex-column gap-2 mt-auto">
+                      <Link
+                        to={
+                          addedProductId ===
+                          product._id
+                            ? "/cart"
+                            : "#"
+                        }
+                        className="btn btn-primary"
+                        onClick={(e) => {
+                          const size =
+                            selectedSize[
+                              product._id
+                            ];
+
+                          if (!size) {
+                            e.preventDefault();
+
+                            toast(
+                              "Please Select The Size",
+                            );
+
+                            return;
+                          }
+
+                          if (
+                            addedProductId !==
+                            product._id
+                          ) {
+                            e.preventDefault();
+
+                            addToCart(
+                              product,
+                              size,
+                            );
+
+                            setAddedProductId(
+                              product._id,
+                            );
+                          }
+                        }}
+                      >
+                        {addedProductId ===
+                        product._id
+                          ? "Go To Cart"
+                          : "Add To Cart"}
+                      </Link>
+
+                      <Link
+                        to={`/productPage/${product._id}`}
+                        className="btn btn-outline-primary"
+                      >
+                        More Detail
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <Footer />
     </>
   );
 };
