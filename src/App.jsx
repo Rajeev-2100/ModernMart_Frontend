@@ -25,12 +25,15 @@ function App() {
 
   useEffect(() => {
     const handleResize = () => {
-      setDisplayCategory(window.innerWidth < 768)
-    }
+      setDisplayCategory(window.innerWidth < 768);
+    };
 
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  },[])
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     if (sortedProducts && sortedProducts.length > 0) {
@@ -117,90 +120,106 @@ function App() {
 
         <section className="mb-5">
           <h2 className="text-center py-5">Shop by Category</h2>
-          <div
-            className={`d-flex flex-row flex-wrap gap-4 ${
-              displayCategory ? "justify-content-center" : "justify-content-between"
-            }`}
-          >
-            <div className="d-flex align-items-center flex-column">
-              <Link to={`/category/Women`}>
-                <img
-                  src="https://img.freepik.com/free-photo/happy-young-woman-uses-her-phone-posing-with-colorful-shopping-bags-studio_8353-5606.jpg"
-                  className="img-fluid"
-                  alt="women"
-                  width="410"
-                  style={{
-                    height: "300px",
-                    objectFit: "cover",
-                    borderRadius: "10px",
-                  }}
-                />
-              </Link>
-              <h4 className="mt-2">Women</h4>
+          <div className="row g-4 justify-content-center">
+            <div className="col-12 col-sm-6 col-lg-4 col-xl-3">
+              <div className="d-flex flex-column align-items-center">
+                <div className="d-flex align-items-center flex-column">
+                  <Link to={`/category/Women`}>
+                    <img
+                      src="https://img.freepik.com/free-photo/happy-young-woman-uses-her-phone-posing-with-colorful-shopping-bags-studio_8353-5606.jpg"
+                      className="img-fluid"
+                      alt="women"
+                      width="410"
+                      style={{
+                        height: "300px",
+                        objectFit: "cover",
+                        borderRadius: "10px",
+                      }}
+                    />
+                  </Link>
+                  <h4 className="mt-2">Women</h4>
+                </div>
+              </div>
             </div>
-            <div className="d-flex align-items-center flex-column">
-              <Link to={`/category/Men`}>
-                <img
-                  src="https://img.freepik.com/premium-photo/online-home-shopping-time-portrait-young-bearded-man-sitting-floor-with-mobile-phone-with-crossed-legs-with-shopping-bags_255757-7840.jpg"
-                  className="img-fluid"
-                  alt="men"
-                  width="410"
-                  style={{
-                    height: "300px",
-                    objectFit: "cover",
-                    borderRadius: "10px",
-                  }}
-                />
-              </Link>
-              <h4 className="mt-2">Men</h4>
+            <div className="col-12 col-sm-6 col-lg-4 col-xl-3">
+              <div className="d-flex flex-column align-items-center">
+                <div className="d-flex align-items-center flex-column">
+                  <Link to={`/category/Men`}>
+                    <img
+                      src="https://img.freepik.com/premium-photo/online-home-shopping-time-portrait-young-bearded-man-sitting-floor-with-mobile-phone-with-crossed-legs-with-shopping-bags_255757-7840.jpg"
+                      className="img-fluid"
+                      alt="men"
+                      width="410"
+                      style={{
+                        height: "300px",
+                        objectFit: "cover",
+                        borderRadius: "10px",
+                      }}
+                    />
+                  </Link>
+                  <h4 className="mt-2">Men</h4>
+                </div>
+              </div>
             </div>
-            <div className="d-flex flex-column align-items-center">
-              <Link to={`/category/Women Sport`}>
-                <img
-                  src="https://images.unsplash.com/photo-1518310383802-640c2de311b2"
-                  className="img-fluid"
-                  alt="women sports wear"
-                  width="410"
-                  style={{
-                    height: "300px",
-                    objectFit: "cover",
-                    borderRadius: "10px",
-                  }}
-                />
-              </Link>
-              <h4 className="mt-2">Women Sports</h4>
+            <div className="col-12 col-sm-6 col-lg-4 col-xl-3">
+              <div className="d-flex flex-column align-items-center">
+                <div className="d-flex flex-column align-items-center">
+                  <Link to={`/category/Women Sport`}>
+                    <img
+                      src="https://images.unsplash.com/photo-1518310383802-640c2de311b2"
+                      className="img-fluid"
+                      alt="women sports wear"
+                      width="410"
+                      style={{
+                        height: "300px",
+                        objectFit: "cover",
+                        borderRadius: "10px",
+                      }}
+                    />
+                  </Link>
+                  <h4 className="mt-2">Women Sports</h4>
+                </div>
+              </div>
             </div>
-            <div className="d-flex flex-column align-items-center">
-              <Link to={`/category/Men Sport`}>
-                <img
-                  src="https://images.unsplash.com/photo-1526401485004-46910ecc8e51"
-                  className="img-fluid"
-                  alt="men sports wear"
-                  width="410"
-                  style={{
-                    height: "300px",
-                    objectFit: "cover",
-                    borderRadius: "10px",
-                  }}
-                />
-              </Link>
-              <h4 className="mt-2">Men Sports</h4>
+            <div className="col-12 col-sm-6 col-lg-4 col-xl-3">
+              <div className="d-flex flex-column align-items-center">
+                <div className="d-flex flex-column align-items-center">
+                  <Link to={`/category/Men Sport`}>
+                    <img
+                      src="https://images.unsplash.com/photo-1526401485004-46910ecc8e51"
+                      className="img-fluid"
+                      alt="men sports wear"
+                      width="410"
+                      style={{
+                        height: "300px",
+                        objectFit: "cover",
+                        borderRadius: "10px",
+                      }}
+                    />
+                  </Link>
+                  <h4 className="mt-2">Men Sports</h4>
+                </div>
+              </div>
             </div>
-            <div className="d-flex flex-column align-items-center">
-              <Link to={`/category/Child`}>
-                <img
-                  src="https://images.pexels.com/photos/8471820/pexels-photo-8471820.jpeg"
-                  className="img-fluid"
-                  alt="kids clothing"
-                  width="410"
-                  style={{
-                    height: "300px",
-                    objectFit: "cover",
-                    borderRadius: "10px",
-                  }}
-                />
-              </Link>
-              <h4 className="mt-2">Child Clothes</h4>
+            <div className="col-12 col-sm-6 col-lg-4 col-xl-3">
+              <div className="d-flex flex-column align-items-center">
+                <div className="d-flex flex-column align-items-center">
+                  <Link to={`/category/Child`}>
+                    <img
+                      src="https://images.pexels.com/photos/8471820/pexels-photo-8471820.jpeg"
+                      className="img-fluid"
+                      alt="kids clothing"
+                      width="410"
+                      style={{
+                        height: "300px",
+                        objectFit: "cover",
+                        borderRadius: "10px",
+                      }}
+                    />
+                  </Link>
+                  <h4 className="mt-2">Child Clothes</h4>
+                </div>
+              </div>
             </div>
           </div>
         </section>
