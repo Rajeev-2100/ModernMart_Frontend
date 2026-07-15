@@ -15,7 +15,7 @@ export const CartProvider = ({ children }) => {
       if (cartLoaded) return;
 
       const res = await fetch(
-        "https://major-project-backend1.vercel.app/api/cart",
+        "https://modern-mart-backend.vercel.app/api/cart",
       );
 
       const data = await res.json();
@@ -35,7 +35,7 @@ export const CartProvider = ({ children }) => {
 
     try {
       const res = await fetch(
-        `https://major-project-backend1.vercel.app/api/cart/${product._id}`,
+        `https://modern-mart-backend.vercel.app/api/cart/${product._id}`,
         {
           method: "POST",
           headers: {
@@ -94,7 +94,7 @@ export const CartProvider = ({ children }) => {
   const removeFromCart = async (cartId) => {
     try {
       const res = await fetch(
-        `https://major-project-backend1.vercel.app/api/deletedCart/${cartId}`,
+        `https://modern-mart-backend.vercel.app/api/deletedCart/${cartId}`,
         {
           method: "DELETE",
         },
@@ -115,7 +115,7 @@ export const CartProvider = ({ children }) => {
   const increaseQty = async (productId, qty) => {
     try {
       await fetch(
-        `https://major-project-backend1.vercel.app/api/updatedCart/${productId}`,
+        `https://modern-mart-backend.vercel.app/api/updatedCart/${productId}`,
         {
           method: "PUT",
           headers: {
@@ -147,7 +147,7 @@ export const CartProvider = ({ children }) => {
 
     try {
       await fetch(
-        `https://major-project-backend1.vercel.app/api/updatedCart/${productId}`,
+        `https://modern-mart-backend.vercel.app/api/updatedCart/${productId}`,
         {
           method: "PUT",
           headers: {
@@ -179,7 +179,7 @@ export const CartProvider = ({ children }) => {
       if (wishListLoaded) return;
 
       const res = await fetch(
-        "https://major-project-backend1.vercel.app/api/wishlist",
+        "https://modern-mart-backend.vercel.app/api/wishlist",
       );
 
       const data = await res.json();
@@ -200,7 +200,7 @@ export const CartProvider = ({ children }) => {
 
     try {
       const res = await fetch(
-        `https://major-project-backend1.vercel.app/api/wishlist/${product._id}`,
+        `https://modern-mart-backend.vercel.app/api/wishlist/${product._id}`,
         {
           method: "POST",
           headers: {
@@ -262,7 +262,7 @@ export const CartProvider = ({ children }) => {
   const removeToWishlist = async (wishlistId) => {
     try {
       const res = await fetch(
-        `https://major-project-backend1.vercel.app/api/wishlist/${wishlistId}`,
+        `https://modern-mart-backend.vercel.app/api/wishlist/${wishlistId}`,
         {
           method: "DELETE",
         },
@@ -285,7 +285,7 @@ export const CartProvider = ({ children }) => {
   const deleteAllCart = async () => {
     try {
       const response = await fetch(
-        "https://major-project-backend1.vercel.app/api/cart/deletedAll",
+        "https://modern-mart-backend.vercel.app/api/cart/deletedAll",
         {
           method: "DELETE",
         },

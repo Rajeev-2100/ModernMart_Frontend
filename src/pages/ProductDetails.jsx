@@ -22,7 +22,7 @@ const ProductDetail = () => {
   const { productId } = useParams();
 
   const { data, loading, error } = useFetch(
-    `https://major-project-backend1.vercel.app/api/products/${productId}`,
+    `https://modern-mart-backend.vercel.app/api/products/${productId}`,
   );
 
   const productData = data?.data;

@@ -13,13 +13,15 @@ export const ProductProvider = ({ children }) => {
   // console.log("Search Term: ", searchTerm);
   // console.log('Categories: ', categories)
 
-  const url = `https://major-project-backend1.vercel.app/api/products`;
+  const url = `https://modern-mart-backend.vercel.app/api/products`;
 
   const { data, loading, error } = useFetch(url);
 
   const productData = data?.products || data?.data || data || [];
+  console.log('Product Data: ', productData);
+  
 
-  const filteredProducts = productData.filter((product) => {
+  const filteredProducts = productData?.filter((product) => {
     const searchMatch =
       !searchTerm ||
       product.productName.toLowerCase().includes(searchTerm.toLowerCase());
@@ -50,7 +52,7 @@ export const ProductProvider = ({ children }) => {
   async function getCategory(categoryName) {
     try {
       const res = await fetch(
-        `https://major-project-backend1.vercel.app/api/category/${encodeURIComponent(categoryName)}`,
+        `https://modern-mart-backend.vercel.app/api/category/${encodeURIComponent(categoryName)}`,
       );
       const data = await res.json();
       console.log("Category API response:", data);

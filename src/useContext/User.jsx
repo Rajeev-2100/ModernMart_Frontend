@@ -11,11 +11,11 @@ export const UserProvider = ({ children }) => {
   const [userAddress, setUserAddress] = useState([]);
 
   const { data: getUserDetails } = useFetch(
-    "https://major-project-backend1.vercel.app/api/user",
+    "https://modern-mart-backend.vercel.app/api/user",
   );
 
   const { data: getApiAddress } = useFetch(
-    "https://major-project-backend1.vercel.app/api/address",
+    "https://modern-mart-backend.vercel.app/api/address",
   );
 
   const userDetails = getUserDetails?.data || [];
@@ -31,7 +31,7 @@ export const UserProvider = ({ children }) => {
 
     try {
       const res = await fetch(
-        "https://major-project-backend1.vercel.app/api/address",
+        "https://modern-mart-backend.vercel.app/api/address",
         {
           method: "POST",
           headers: {
@@ -56,7 +56,7 @@ export const UserProvider = ({ children }) => {
   const deletedUserAddress = async (userAddressId) => {
     try {
       await fetch(
-        `https://major-project-backend1.vercel.app/api/address/${userAddressId}`,
+        `https://modern-mart-backend.vercel.app/api/address/${userAddressId}`,
         {
           method: "DELETE",
         },
@@ -75,7 +75,7 @@ export const UserProvider = ({ children }) => {
   const updateUserAddress = async (userAddressId, updatedData) => {
     try {
       const res = await fetch(
-        `https://major-project-backend1.vercel.app/api/address/${userAddressId}`,
+        `https://modern-mart-backend.vercel.app/api/address/${userAddressId}`,
         {
           method: "PUT",
           headers: {

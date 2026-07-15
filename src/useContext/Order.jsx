@@ -17,7 +17,7 @@ export const OrderProvider = ({ children }) => {
       
       console.log('Sending order data:', orderData); // ✅ Debug
 
-      const res = await fetch("https://major-project-backend1.vercel.app/api/order", {
+      const res = await fetch("https://modern-mart-backend.vercel.app/api/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderData), // ✅ Directly send orderData
@@ -59,7 +59,7 @@ export const OrderProvider = ({ children }) => {
       setLoading(true);
       console.log('AllOrders:', orders)
       
-      const res = await fetch("https://major-project-backend1.vercel.app/api/order");
+      const res = await fetch("https://modern-mart-backend.vercel.app/api/order");
       const data = await res.json();
       console.log('Res:', res)
       
@@ -95,7 +95,7 @@ export const OrderProvider = ({ children }) => {
       setSelectedOrder(null);
 
       const res = await fetch(
-        `https://major-project-backend1.vercel.app/api/order/${orderId}`
+        `https://modern-mart-backend.vercel.app/api/order/${orderId}`
       );
       const data = await res.json();
 
