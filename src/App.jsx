@@ -9,10 +9,31 @@ import ProductContext from "./useContext/product";
 function App() {
   const { sortedProducts, loading, error } = useContext(ProductContext);
   const [bestSellerProducts, setBestSellerProducts] = useState([]);
+  const [imageHeight, setImageHeight] = useState("400px");
+  const [displayCategory, setDisplayCategory] = useState("400px");
+
+  useEffect(() => {
+    const handleResize = () => {
+      setImageHeight(window.innerWidth < 768 ? "220px" : "500px");
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setDisplayCategory(window.innerWidth < 768)
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  },[])
 
   useEffect(() => {
     if (sortedProducts && sortedProducts.length > 0) {
-      // Get best seller products (top 4 products with highest rating)
       const topProducts = [...sortedProducts]
         .sort((a, b) => b.rating - a.rating)
         .slice(0, 4);
@@ -24,17 +45,19 @@ function App() {
     <>
       <MainHeader />
       <main className="container py-5">
-        {/* Carousel Section */}
-        <section className="mb-5">
+        <section className="mb-3">
           <div id="carouselExample" className="carousel slide">
             <div className="carousel-inner">
               <div className="carousel-item active">
                 <div className="d-flex justify-content-center align-items-center">
                   <img
-                    src="https://images.unsplash.com/photo-1760024678775-2410218abad4?q=80&w=2180&h=1080&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    alt=""
-                    className="img-fluid"
-                    style={{ width: "100%", height: "400px", objectFit: "cover" }}
+                    src="https://images.unsplash.com/photo-1760024678775-2410218abad4?q=80&w=2180&auto=format&fit=crop"
+                    alt="Carousel"
+                    className="img-fluid w-100"
+                    style={{
+                      height: imageHeight,
+                      objectFit: "cover",
+                    }}
                   />
                 </div>
               </div>
@@ -42,9 +65,12 @@ function App() {
                 <div className="d-flex justify-content-center align-items-center">
                   <img
                     src="https://plus.unsplash.com/premium_photo-1661422061155-b78d4a75f667?q=80&w=2180&h=1080&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    alt=""
-                    className="img-fluid"
-                    style={{ width: "100%", height: "400px", objectFit: "cover" }}
+                    alt="Carousel"
+                    className="img-fluid w-100"
+                    style={{
+                      height: imageHeight,
+                      objectFit: "cover",
+                    }}
                   />
                 </div>
               </div>
@@ -52,9 +78,12 @@ function App() {
                 <div className="d-flex justify-content-center align-items-center">
                   <img
                     src="https://images.unsplash.com/photo-1775574222563-22a713da3f4f?q=80&w=2180&h=1080&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    alt=""
-                    className="img-fluid"
-                    style={{ width: "100%", height: "400px", objectFit: "cover" }}
+                    alt="Carousel"
+                    className="img-fluid w-100"
+                    style={{
+                      height: imageHeight,
+                      objectFit: "cover",
+                    }}
                   />
                 </div>
               </div>
@@ -65,7 +94,10 @@ function App() {
               data-bs-target="#carouselExample"
               data-bs-slide="prev"
             >
-              <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span
+                className="carousel-control-prev-icon"
+                aria-hidden="true"
+              ></span>
               <span className="visually-hidden">Previous</span>
             </button>
             <button
@@ -74,7 +106,10 @@ function App() {
               data-bs-target="#carouselExample"
               data-bs-slide="next"
             >
-              <span className="carousel-control-next-icon" aria-hidden="true"></span>
+              <span
+                className="carousel-control-next-icon"
+                aria-hidden="true"
+              ></span>
               <span className="visually-hidden">Next</span>
             </button>
           </div>
@@ -82,7 +117,11 @@ function App() {
 
         <section className="mb-5">
           <h2 className="text-center py-5">Shop by Category</h2>
-          <div className="d-flex justify-content-between flex-row flex-wrap gap-4 justify-content-sm-center">
+          <div
+            className={`d-flex flex-row flex-wrap gap-4 ${
+              displayCategory ? "justify-content-center" : "justify-content-between"
+            }`}
+          >
             <div className="d-flex align-items-center flex-column">
               <Link to={`/category/Women`}>
                 <img
@@ -90,7 +129,11 @@ function App() {
                   className="img-fluid"
                   alt="women"
                   width="410"
-                  style={{ height: "300px", objectFit: "cover", borderRadius: "10px" }}
+                  style={{
+                    height: "300px",
+                    objectFit: "cover",
+                    borderRadius: "10px",
+                  }}
                 />
               </Link>
               <h4 className="mt-2">Women</h4>
@@ -102,7 +145,11 @@ function App() {
                   className="img-fluid"
                   alt="men"
                   width="410"
-                  style={{ height: "300px", objectFit: "cover", borderRadius: "10px" }}
+                  style={{
+                    height: "300px",
+                    objectFit: "cover",
+                    borderRadius: "10px",
+                  }}
                 />
               </Link>
               <h4 className="mt-2">Men</h4>
@@ -114,7 +161,11 @@ function App() {
                   className="img-fluid"
                   alt="women sports wear"
                   width="410"
-                  style={{ height: "300px", objectFit: "cover", borderRadius: "10px" }}
+                  style={{
+                    height: "300px",
+                    objectFit: "cover",
+                    borderRadius: "10px",
+                  }}
                 />
               </Link>
               <h4 className="mt-2">Women Sports</h4>
@@ -126,7 +177,11 @@ function App() {
                   className="img-fluid"
                   alt="men sports wear"
                   width="410"
-                  style={{ height: "300px", objectFit: "cover", borderRadius: "10px" }}
+                  style={{
+                    height: "300px",
+                    objectFit: "cover",
+                    borderRadius: "10px",
+                  }}
                 />
               </Link>
               <h4 className="mt-2">Men Sports</h4>
@@ -138,7 +193,11 @@ function App() {
                   className="img-fluid"
                   alt="kids clothing"
                   width="410"
-                  style={{ height: "300px", objectFit: "cover", borderRadius: "10px" }}
+                  style={{
+                    height: "300px",
+                    objectFit: "cover",
+                    borderRadius: "10px",
+                  }}
                 />
               </Link>
               <h4 className="mt-2">Child Clothes</h4>
@@ -175,7 +234,10 @@ function App() {
           ) : (
             <div className="row g-4">
               {bestSellerProducts.map((product) => (
-                <div key={product._id} className="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div
+                  key={product._id}
+                  className="col-12 col-sm-6 col-md-4 col-lg-3"
+                >
                   <div className="card h-100 shadow-sm border-0">
                     <div className="position-relative">
                       <span className="badge bg-warning text-dark position-absolute top-0 start-0 m-2 px-3 py-2">
@@ -193,13 +255,16 @@ function App() {
                       />
                     </div>
                     <div className="card-body d-flex flex-column">
-                      <h5 className="card-title text-truncate">{product.productName}</h5>
+                      <h5 className="card-title text-truncate">
+                        {product.productName}
+                      </h5>
                       <p className="card-text text-primary fw-bold fs-5">
                         ${product.productPrice}
                       </p>
                       <p className="card-text text-muted small">
                         <i className="bi bi-tag me-1"></i>
-                        {product.categoryField?.categoryField || "Uncategorized"}
+                        {product.categoryField?.categoryField ||
+                          "Uncategorized"}
                       </p>
                       <div className="mt-auto">
                         <Link
